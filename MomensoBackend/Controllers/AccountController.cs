@@ -34,7 +34,7 @@ namespace MomensoBackend.Controllers
             _configuration = configuration;
         }
 
-        [Authorize]
+        [Authorize(Roles = "Student")]
         public IActionResult Test()
         {
             return Json("Hello");

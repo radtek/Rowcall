@@ -105,7 +105,7 @@ namespace MomensoBackend
             app.UseAuthentication();
             app.UseMvc();
 
-            SeedDb.InitDb(context);
+            //SeedDb.InitDb(context);
 
         }
     }
