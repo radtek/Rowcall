@@ -49,7 +49,8 @@ namespace MomensoBackend.Controllers
                 if (result.Succeeded)
                 {
                     var appUser = _userManager.Users.SingleOrDefault(r => r.NormalizedUserName == model.Email.ToUpper());
-                    return Json(new JsonResponse(true, await GenerateJwtToken(model.Email, appUser))); 
+                    var role = (await _userManager.GetRolesAsync(appUser)).First(); 
+                    return Json(new JsonResponse(true, await GenerateJwtToken(model.Email, appUser, role))); 
                 }
                 return Json(new JsonResponse(false, "Invalid login attempt."));
             }
@@ -73,13 +74,21 @@ namespace MomensoBackend.Controllers
                 if (result.Succeeded)
                 {
                     // Lets add user to a role: 
+                    var role = ""; 
                     if (model.Teacher)
+                    {
                         await _userManager.AddToRoleAsync(user, "Teacher");
+                        role = "Teacher";
+                    }
                     else
-                        await _userManager.AddToRoleAsync(user, "Student"); 
+                    {
+                        await _userManager.AddToRoleAsync(user, "Student");
+                        role = "Student"; 
+                    }
+                     
 
                     await _signInManager.SignInAsync(user, false);
-                    return Json(new JsonResponse(true, await GenerateJwtToken(model.Email, user)));
+                    return Json(new JsonResponse(true, await GenerateJwtToken(model.Email, user, role)));
                 }
                 var errorMsg = result.Errors.First().Description;
                 return Json(new JsonResponse(false, errorMsg));
@@ -90,13 +99,14 @@ namespace MomensoBackend.Controllers
 
         // Generates a Json Web Token and returns it to the user. The user should store and use this in every request
         // For every authorized request use following header: "authorization" and set value to "Bearer your-token-here"
-        private async Task<string> GenerateJwtToken(string email, IdentityUser user)
+        private async Task<string> GenerateJwtToken(string email, IdentityUser user, string roleName)
         {
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id)
+                new Claim(ClaimTypes.NameIdentifier, user.Id), 
+                new Claim(ClaimTypes.Role, roleName)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]));
