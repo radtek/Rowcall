@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20180328120857_momentsadded.cs" />
+    <Compile Remove="Migrations\20180328120857_momentsadded.Designer.cs" />
+    <Compile Remove="Migrations\20180331104308_countryAdded.cs" />
+    <Compile Remove="Migrations\20180331104308_countryAdded.Designer.cs" />
+    <Compile Remove="Migrations\20180331104512_countryAdded.cs" />
+    <Compile Remove="Migrations\20180331104512_countryAdded.Designer.cs" />
+    <Compile Remove="Migrations\20180419080229_init.cs" />
+    <Compile Remove="Migrations\20180419080229_init.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GeoCoordinate" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.2" />
+  </ItemGroup>
+
+</Project>
