@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Services;
 
 namespace SOAPTokenGenerator
@@ -18,20 +16,13 @@ namespace SOAPTokenGenerator
     {
         private static Random random = new Random();
 
-
         [WebMethod]
-        public string HelloWorld()
-        {
-            return "Hello World";
-        }
-
-        [WebMethod]
-        public string GenerateToken(int duration)
+        public string GenerateToken()
         {
             return RandomString(6);
         }
 
-        
+
         private static string RandomString(int length)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
