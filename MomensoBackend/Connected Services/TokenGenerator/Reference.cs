@@ -7,10 +7,12 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
+using System.Linq;
+
 namespace TokenGenerator
 {
-    
-    
+
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(Namespace="http://localhost/SOAPTokenGenerator/TokenGenerator.asmx", ConfigurationName="TokenGenerator.WebService1Soap")]
     public interface WebService1Soap
@@ -91,23 +93,39 @@ namespace TokenGenerator
             this.GenerateTokenResult = GenerateTokenResult;
         }
     }
-    
+
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.0")]
     public interface WebService1SoapChannel : TokenGenerator.WebService1Soap, System.ServiceModel.IClientChannel
     {
+        object GenerateTokenAsync();
     }
-    
+
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.0")]
     public partial class WebService1SoapClient : System.ServiceModel.ClientBase<TokenGenerator.WebService1Soap>, TokenGenerator.WebService1Soap
     {
-        
-    /// <summary>
-    /// Implement this partial method to configure the service endpoint.
-    /// </summary>
-    /// <param name="serviceEndpoint">The endpoint to configure</param>
-    /// <param name="clientCredentials">The client credentials</param>
-    static partial void ConfigureEndpoint(System.ServiceModel.Description.ServiceEndpoint serviceEndpoint, System.ServiceModel.Description.ClientCredentials clientCredentials);
+        private static Random random = new Random();
+
+        public string GenToken()
+        {
+            return RandomString(6);
+        }
+
+
+        private static string RandomString(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+            return new string(Enumerable.Repeat(chars, length)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+        /// <summary>
+        /// Implement this partial method to configure the service endpoint.
+        /// </summary>
+        /// <param name="serviceEndpoint">The endpoint to configure</param>
+        /// <param name="clientCredentials">The client credentials</param>
+        static partial void ConfigureEndpoint(System.ServiceModel.Description.ServiceEndpoint serviceEndpoint, System.ServiceModel.Description.ClientCredentials clientCredentials);
         
         public WebService1SoapClient(EndpointConfiguration endpointConfiguration) : 
                 base(WebService1SoapClient.GetBindingForEndpoint(endpointConfiguration), WebService1SoapClient.GetEndpointAddress(endpointConfiguration))
