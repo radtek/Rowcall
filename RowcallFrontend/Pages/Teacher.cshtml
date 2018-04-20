@@ -17,14 +17,12 @@
                 </div>
             </div>
             <div class="list-group" id="listGroupClass">
-                <a href="#" class="list-group-item list-group-item-action">
-                    <b>Token: </b> AFGJ452FD
-                </a>
+
             </div>
 
 
         </div>
-        <div class="col-4">
+        <div class="col-4" id="tokenContainer" style="display: none">
             <h3 style="padding-bottom: 10px;">
                 Class tokens:
             </h3>
@@ -35,30 +33,21 @@
                 </a>
             </div>
         </div>
-        <div class="col-4">
+        <div class="col-4" id="studentContainer" style="display: none">
             <h3 style="padding-bottom: 10px;">
                 Class students:
             </h3>
             <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Student email" aria-label="Recipient's username" aria-describedby="basic-addon2" id="">
+                <input type="text" class="form-control" placeholder="Student email" aria-label="Recipient's username" aria-describedby="basic-addon2" id="studentMail">
                 <div class="input-group-append">
-                    <button class="btn btn-outline-success" type="button" id="">Add</button>
+                    <button class="btn btn-outline-success" type="button" id="addStudentBtn">Add</button>
                 </div>
             </div>
-            <div class="list-group" id="listGroupToken">
-                <a href="#" class="list-group-item list-group-item-action">
-                    Christoffer
-                </a>
-                <a href="#" class="list-group-item list-group-item-action">
-                    Magnus
-                </a>
-                <a href="#" class="list-group-item list-group-item-action">
-                    Pavel
-                </a>
+            <div class="list-group" id="listGroupStudents">
+
             </div>
         </div>
     </div>
-
 </div>
 
 
@@ -67,18 +56,29 @@
 
 @section Scripts{
     <script>
+
+        var lastClickedClassId = -1; 
+
         $(document).ready(function () {
+
             if (!getCookie("token")) {
                 window.location.href = "/";
             }
+
+            $(document).on("click", ".class-icon", function () {
+                $(".list-group-item").removeClass("active");
+                $(this).addClass("active");
+                $("#tokenContainer").show();
+                $("#studentContainer").show();
+                lastClickedClassId = $(this).attr("id");
+                console.log("LastId: " + lastClickedClassId)
+                getStudents();
+            });
+
             $("#studentBtn").hide();
-
-
             getClasses();
 
-
-
-            // Create new
+            // Create new class
             $("#createClassBtn").click(function () {
 
                 var name = $("#className").val();
@@ -109,6 +109,43 @@
                     }
                 });
             });
+
+            // Add student to class by email
+            $("#addStudentBtn").click(function () {
+
+                var mail = $("#studentMail").val();
+                var id = lastClickedClassId; 
+
+                var data = { email: mail, classRoomId: id };
+                var token = getCookie("token");
+                token = 'Bearer ' + token;
+
+                if (!mail) {
+                    $("#studentMail").focus()
+                    return;
+                }
+
+                $.ajax({
+                    url: "http://localhost:2265/api/classroom/adduserbyemail",
+                    method: "POST",
+                    dataType: 'json',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    },
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        getStudents();
+                        console.log("SUCCESS!!")
+                    },
+                    error: function (error) {
+                        console.log(error);
+                        console.log("ERROR!!!")
+
+                    }
+                });
+            });
         });
 
         function getClasses() {
@@ -127,12 +164,41 @@
                 success: function (response) {
 
                     $("#listGroupClass").html("");
+                    console.log(response);
 
                     $(response).each(function (index, element) {
-                        $("#listGroupClass").append('<a href="#" class="list-group-item list-group-item-action">' + element.name + '</a>');
-                        console.log(element);
+                        $("#listGroupClass").append('<a href="#" class="list-group-item list-group-item-action class-icon" id="' + element.id + '">' + element.name + '</a>');
                     });
 
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        function getStudents() {
+            var token = getCookie("token");
+            token = 'Bearer ' + token;
+
+            var id = lastClickedClassId; 
+
+            $.ajax({
+                url: "http://localhost:2265/api/classroom/getstudentsforclass?classroomid=" + id,
+                method: "GET",
+                dataType: 'json',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': token
+                },
+                success: function (response) {
+                    $("#listGroupStudents").html("");
+                    console.log(response);
+
+                    $(response).each(function (index, element) {
+                        $("#listGroupStudents").append('<a href="#" class="list-group-item list-group-item-action class-icon">' + element + '</a>');
+                    });
                 },
                 error: function (error) {
                     console.log(error);

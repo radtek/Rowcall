@@ -84,6 +84,30 @@ namespace RowcallBackend.Controllers
             return Ok(); 
         }
 
+        [Route("[action]")]
+        [HttpPost]
+        public async Task<IActionResult> AddUserByEmail([FromBody] AddUserDto model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+                return NotFound();
+            _dbContext.UserClass.Add(new UserClass() { ApplicationUserId = user.Id, ClassRoomId = model.ClassRoomId });
+            _dbContext.SaveChanges();
+            return Json("All good bro!"); 
+        }
+
+        [Route("[action]")]
+        [HttpGet]
+        public async Task<IActionResult> GetStudentsForClass(int classRoomId)
+        {
+            var classRoom = await _dbContext.ClassRoom
+                .Include(x => x.Students)
+                .ThenInclude(x => x.ApplicationUser)
+                .SingleOrDefaultAsync(x => x.Id == classRoomId);
+            var students = classRoom.Students.Select(x => x.ApplicationUser.Email).ToList();
+            return Json(students); 
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

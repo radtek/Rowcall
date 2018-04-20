@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using MomensoBackend.Data;
@@ -46,6 +47,7 @@ namespace MomensoBackend.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByEmailAsync(model.Email);
+
                 if(user != null)
                 {
                     var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, false, false);
