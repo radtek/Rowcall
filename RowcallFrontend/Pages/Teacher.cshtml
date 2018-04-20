@@ -1,0 +1,144 @@
+﻿@page
+@model AboutModel
+@{
+    ViewData["Title"] = "Teacher";
+}
+<div class="teacher-dash">
+    <div class="row">
+
+        <div class="col-4">
+            <h3 style="padding-bottom: 10px;">
+                My classes:
+            </h3>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Classname" aria-label="Recipient's username" aria-describedby="basic-addon2" id="className">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-success" type="button" id="createClassBtn">Create</button>
+                </div>
+            </div>
+            <div class="list-group" id="listGroupClass">
+                <a href="#" class="list-group-item list-group-item-action">
+                    <b>Token: </b> AFGJ452FD
+                </a>
+            </div>
+
+
+        </div>
+        <div class="col-4">
+            <h3 style="padding-bottom: 10px;">
+                Class tokens:
+            </h3>
+            <button class="btn btn-outline-success w-100 disabled" type="button" id="createClassBtn" style="margin-bottom: 1rem;">Generate new token</button>
+            <div class="list-group" id="listGroupToken">
+                <a href="#" class="list-group-item list-group-item-action">
+                    <b>Token: </b> AFGJ452FD, 20-04-2018 13:03
+                </a>
+            </div>
+        </div>
+        <div class="col-4">
+            <h3 style="padding-bottom: 10px;">
+                Class students:
+            </h3>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Student email" aria-label="Recipient's username" aria-describedby="basic-addon2" id="">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-success" type="button" id="">Add</button>
+                </div>
+            </div>
+            <div class="list-group" id="listGroupToken">
+                <a href="#" class="list-group-item list-group-item-action">
+                    Christoffer
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    Magnus
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    Pavel
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            if (!getCookie("token")) {
+                window.location.href = "/";
+            }
+            $("#studentBtn").hide();
+
+
+            getClasses();
+
+
+
+            // Create new
+            $("#createClassBtn").click(function () {
+
+                var name = $("#className").val();
+                var data = { name: name };
+                var token = getCookie("token");
+                token = 'Bearer ' + token;
+
+                if (!name) {
+                    $("#className").focus()
+                    return;
+                }
+
+                $.ajax({
+                    url: "http://localhost:2265/api/classroom",
+                    method: "POST",
+                    dataType: 'json',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    },
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        getClasses();
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            });
+        });
+
+        function getClasses() {
+            var token = getCookie("token");
+            token = 'Bearer ' + token;
+
+            $.ajax({
+                url: "http://localhost:2265/api/classroom",
+                method: "GET",
+                dataType: 'json',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': token
+                },
+                success: function (response) {
+
+                    $("#listGroupClass").html("");
+
+                    $(response).each(function (index, element) {
+                        $("#listGroupClass").append('<a href="#" class="list-group-item list-group-item-action">' + element.name + '</a>');
+                        console.log(element);
+                    });
+
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+    </script>
+}

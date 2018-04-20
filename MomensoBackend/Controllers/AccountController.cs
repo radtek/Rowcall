@@ -45,12 +45,17 @@ namespace MomensoBackend.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
-                if (result.Succeeded)
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if(user != null)
                 {
-                    var appUser = _userManager.Users.SingleOrDefault(r => r.NormalizedUserName == model.Email.ToUpper());
-                    var role = (await _userManager.GetRolesAsync(appUser)).First(); 
-                    return Json(new JsonResponse(true, await GenerateJwtToken(model.Email, appUser, role))); 
+                    var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, false, false);
+                    if (result.Succeeded)
+                    {
+                        var roles = await _userManager.GetRolesAsync(user);
+                        var role = roles.First();
+
+                        return Json(new JsonResponse(true, await GenerateJwtToken(model.Email, user, role)));
+                    }
                 }
                 return Json(new JsonResponse(false, "Invalid login attempt."));
             }
