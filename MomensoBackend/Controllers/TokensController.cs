@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
@@ -30,27 +31,25 @@ namespace RowcallBackend.Controllers
 
         // GET: api/Tokens/5
         [HttpGet("{id}")]
-        public async Task<string> GetToken([FromRoute] int id)
+        public IActionResult GetToken([FromRoute] int id, int classId)
         {
-            if (!ModelState.IsValid)
-            {
-                return "BadRequest(ModelState)";
-            }
-
-            var token = await _context.Token.SingleOrDefaultAsync(m => m.Id == id);
-
             WebService1SoapClient client = new WebService1SoapClient(
                 new BasicHttpBinding(BasicHttpSecurityMode.None),
                 new EndpointAddress("http://localhost/SOAPTokenGenerator/TokenGenerator.asmx")
                 );
 
-            string result = client.GenToken();
+            Token token = new Token
+            {
+                Value = client.GenToken(),
+                Duration = 30,
+                CreatedDateTime = DateTime.Now,
+                ClassId = classId
+            };
 
-
-
-            return result;
+            return Ok(token);
         }
-        
+
+
         private bool TokenExists(int id)
         {
             return _context.Token.Any(e => e.Id == id);
