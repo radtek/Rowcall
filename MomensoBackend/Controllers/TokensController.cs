@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using MomensoBackend.Data;
 using RowcallBackend.Models;
 using TokenGenerator;
@@ -40,7 +38,7 @@ namespace RowcallBackend.Controllers
 
             Token token = new Token
             {
-                Value = client.GenToken(),
+                Value = client.GenerateToken(),
                 Duration = 30,
                 CreatedDateTime = DateTime.Now,
                 ClassId = classId

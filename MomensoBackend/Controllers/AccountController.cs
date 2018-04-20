@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using MomensoBackend.Data;
 using MomensoBackend.Models;
 using MomensoBackend.Models.AccountModels;
+using RowcallBackend.Models.AccountModels;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -60,7 +62,46 @@ namespace MomensoBackend.Controllers
                 return Json(new JsonResponse(false, "Invalid login attempt."));
             }
             var modelError = ModelState.Values.SelectMany(x => x.Errors).First().ErrorMessage;
+
             return Json(new JsonResponse(false, modelError));
+        }
+
+        [HttpPost]
+        public async Task<object> StudentLogin([FromBody] StudentLoginModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                //var user = await _userManager.FindByEmailAsync(model.Email);
+
+                var user = _dbContext.Users.Include(x => x.UserClass).SingleOrDefault(x => x.Email == model.Email);
+                var token = _dbContext.Token.Include(x => x.ClassId).SingleOrDefault(x => x.Value == model.TokenValue);
+
+                if (user != null)
+                {
+                    var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, false, false);
+                    if (result.Succeeded)
+                    {
+                        foreach (var classRoom in user.UserClass)
+                        {
+                            if(classRoom.ClassRoomId == token.ClassId)
+                            {
+                                // TODO: Continue
+                            }
+                        } 
+                    }
+                }
+                return Json(new JsonResponse(false, "Invalid login attempt."));
+            }
+            var modelError = ModelState.Values.SelectMany(x => x.Errors).First().ErrorMessage;
+
+            return Json(new JsonResponse(false, modelError));
+        }
+
+        private bool IsTokenValidForStudent()
+        {
+            bool result = false;
+
+            return result;
         }
 
         [HttpPost]

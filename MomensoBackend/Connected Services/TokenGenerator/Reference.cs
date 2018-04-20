@@ -106,7 +106,7 @@ namespace TokenGenerator
     {
         private static Random random = new Random();
 
-        public string GenToken()
+        public string GenerateToken()
         {
             return RandomString(6);
         }
