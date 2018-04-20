@@ -48,6 +48,7 @@ namespace MomensoBackend.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByEmailAsync(model.Email);
+
                 if(user != null)
                 {
                     var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, false, false);
