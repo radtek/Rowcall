@@ -65,6 +65,7 @@ namespace MomensoBackend
                 options.AddPolicy("SiteCorsPolicy", corsBuilder.Build());
             });
 
+
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
             services
                 .AddAuthentication(options =>
