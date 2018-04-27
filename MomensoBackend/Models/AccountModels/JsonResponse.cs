@@ -17,6 +17,5 @@ namespace MomensoBackend.Models.AccountModels
             Succeded = succeded;
             Response = response;
         }
-
     }
 }

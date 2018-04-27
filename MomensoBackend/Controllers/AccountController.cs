@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using MomensoBackend.Data;
 using MomensoBackend.Models;
 using MomensoBackend.Models.AccountModels;
+using RowcallBackend.Models;
 using RowcallBackend.Models.AccountModels;
 using System;
 using System.Collections.Generic;
@@ -68,25 +69,44 @@ namespace MomensoBackend.Controllers
         }
 
         [HttpPost]
-        public async Task<object> StudentLogin([FromBody] StudentLoginModel model)
+        public async Task<object> StudentLogin([FromBody] StudentLoginModel model, int durationMinutes)
         {
             if (ModelState.IsValid)
             {
-                //var user = await _userManager.FindByEmailAsync(model.Email);
-
                 var user = _dbContext.Users.Include(x => x.UserClass).SingleOrDefault(x => x.Email == model.Email);
-                var token = _dbContext.Token.Include(x => x.ClassId).SingleOrDefault(x => x.Value == model.TokenValue);
 
                 if (user != null)
                 {
                     var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, false, false);
+
                     if (result.Succeeded)
                     {
+                        
+                        var token = _dbContext.Token.Include(x => x.ClassRoom).SingleOrDefault(x => x.Value == model.TokenValue);
+
                         foreach (var classRoom in user.UserClass)
                         {
                             if(classRoom.ClassRoomId == token.ClassId)
                             {
-                                // TODO: Continue
+                                DateTime timeNow = DateTime.Now;
+                                DateTime durationTime = token.CreatedDateTime.AddMinutes(durationMinutes);
+
+                                if (timeNow < durationTime)
+                                {
+                                    UserToken userToken = new UserToken();
+                                    userToken.ApplicationUserId = user.Id;
+                                    userToken.TokenId = token.Id;
+
+                                    return Ok(userToken);
+                                }
+                                else
+                                {
+                                    return Json(new JsonResponse(false, "Duration of the token has expired."));
+                                }
+                            }
+                            else
+                            {
+                                return Json(new JsonResponse(false, "Student does not belong to this class."));
                             }
                         } 
                     }
