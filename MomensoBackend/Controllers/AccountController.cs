@@ -132,7 +132,6 @@ namespace MomensoBackend.Controllers
             {
                 var user = new ApplicationUser
                 {
-
                     UserName = model.Username,
                     Email = model.Email
                 };

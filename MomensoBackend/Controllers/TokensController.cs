@@ -27,6 +27,14 @@ namespace RowcallBackend.Controllers
             _userManager = userManager; 
         }
 
+        [HttpGet]
+        [Route("/api/Tokens/GetUsers/{id}")]
+        public IActionResult GetUsers(int id)
+        {
+            var users = _context.UserToken.Where(x => x.TokenId == id); 
+            return Json(users); 
+        }
+
         // GET: api/Tokens
         [HttpGet]
         public async Task<IEnumerable<Token>> GetToken()
