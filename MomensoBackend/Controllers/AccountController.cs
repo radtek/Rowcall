@@ -69,7 +69,7 @@ namespace MomensoBackend.Controllers
         }
 
         [HttpPost]
-        public async Task<object> StudentLogin([FromBody] StudentLoginModel model, int durationMinutes)
+        public async Task<object> StudentLogin([FromBody] StudentLoginModel model)
         {
             if (ModelState.IsValid)
             {
@@ -89,7 +89,7 @@ namespace MomensoBackend.Controllers
                             if(classRoom.ClassRoomId == token.ClassId)
                             {
                                 DateTime timeNow = DateTime.Now;
-                                DateTime durationTime = token.CreatedDateTime.AddMinutes(durationMinutes);
+                                DateTime durationTime = token.CreatedDateTime.AddMinutes(30);
 
                                 if (timeNow <= durationTime)
                                 {
