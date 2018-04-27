@@ -82,7 +82,7 @@ namespace MomensoBackend.Controllers
                     if (result.Succeeded)
                     {
                         
-                        var token = _dbContext.Token.Include(x => x.ClassRoom).SingleOrDefault(x => x.Value == model.TokenValue);
+                        var token = _dbContext.Token.Include(x => x.ClassRoom).SingleOrDefault(x => x.TokenValue == model.TokenValue);
 
                         foreach (var classRoom in user.UserClass)
                         {

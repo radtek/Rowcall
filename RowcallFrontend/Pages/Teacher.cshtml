@@ -30,9 +30,6 @@
             </h3>
             <button class="btn btn-outline-success w-100" type="button" id="createTokenBtn" style="margin-bottom: 1rem;">Generate new token</button>
             <div class="list-group" id="listGroupToken">
-                <a href="#" class="list-group-item list-group-item-action">
-                    <b>Token: </b> AFGJ452FD, 20-04-2018 13:03
-                </a>
             </div>
         </div>
 
@@ -71,7 +68,7 @@
                 window.location.href = "/";
             }
 
-
+            // Create token
             $(document).on("click", "#createTokenBtn", function () {
 
                 var data = { classId: lastClickedClassId }; 
@@ -89,7 +86,7 @@
                     },
                     data: JSON.stringify(data),
                     success: function (response) {
-                        console.log(response); 
+                        getTokens();
                     },
                     error: function (error) {
                         console.log(error);
@@ -97,8 +94,6 @@
                 });
 
             });
-
-
 
             $(document).on("click", ".class-icon", function () {
                 $(".list-group-item").removeClass("active");
@@ -108,6 +103,7 @@
                 lastClickedClassId = $(this).attr("id");
                 console.log("LastId: " + lastClickedClassId)
                 getStudents();
+                getTokens(); 
             });
 
             $("#studentBtn").hide();
@@ -234,6 +230,37 @@
                     $(response).each(function (index, element) {
                         $("#listGroupStudents").append('<a href="#" class="list-group-item list-group-item-action class-icon">' + element + '</a>');
                     });
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        function getTokens() {
+            $("#listGroupToken").html(" ");
+
+            var token = getCookie("token");
+            token = 'Bearer ' + token;
+
+            var id = lastClickedClassId;
+
+            $.ajax({
+                url: "http://localhost:2265/api/tokens/" + id,
+                method: "GET",
+                dataType: 'json',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': token
+                },
+                success: function (response) {
+                   
+                    console.log("IT SHOULD CLEAR THE TOKEN GROUP NOW!!!");
+                    $(response).each(function (index, element) {
+                        $("#listGroupToken").append('<a href="#" class="list-group-item list-group-item-action"> <b>Token: </b> ' + element.tokenValue + ', ' + element.createdDateTime +'</a>');
+                    });
+
                 },
                 error: function (error) {
                     console.log(error);

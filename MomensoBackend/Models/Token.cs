@@ -12,7 +12,7 @@ namespace RowcallBackend.Models
         [ForeignKey("ClassRoom")]
         public int ClassId { get; set; }    
 
-        public string Value { get; set; }
+        public string TokenValue { get; set; }
         public int Duration { get; set; } 
         public DateTime CreatedDateTime { get; set; }
 
