@@ -91,7 +91,7 @@ namespace MomensoBackend.Controllers
                                 DateTime timeNow = DateTime.Now;
                                 DateTime durationTime = token.CreatedDateTime.AddMinutes(durationMinutes);
 
-                                if (timeNow < durationTime)
+                                if (timeNow <= durationTime)
                                 {
                                     UserToken userToken = new UserToken();
                                     userToken.ApplicationUserId = user.Id;
