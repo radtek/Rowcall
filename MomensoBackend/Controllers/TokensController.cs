@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -9,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using MomensoBackend.Data;
 using MomensoBackend.Models;
 using RowcallBackend.Models;
+using TokenGenerator;
 
 namespace RowcallBackend.Controllers
 {
@@ -97,6 +99,8 @@ namespace RowcallBackend.Controllers
 
             var token = new Token()
             {
+                Value = client.GenerateToken(),
+                Duration = 30,
                 ClassId = dto.ClassId,
                 Duration = 15,
                 CreatedDateTime = DateTime.Now,
