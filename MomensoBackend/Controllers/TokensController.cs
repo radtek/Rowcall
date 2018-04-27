@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MomensoBackend.Data;
 using MomensoBackend.Models;
@@ -12,10 +12,12 @@ using RowcallBackend.Models;
 
 namespace RowcallBackend.Controllers
 {
+    [Produces("application/json")]
+    [Route("api/Tokens")]
     public class TokensController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager; 
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public TokensController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
@@ -26,84 +28,106 @@ namespace RowcallBackend.Controllers
         // GET: api/Tokens
         [HttpGet]
         public async Task<IEnumerable<Token>> GetToken()
-        {
-            var currentUser = await _userManager.GetUserAsync(User);
-            var tokens = _context.Token.Include(x => x.UserToken).Where(x => x.UserToken.Any(p => p.ApplicationUserId == currentUser.Id)); 
-            return tokens;
+        { 
+            return _context.Token;
         }
 
-            if (ModelState.IsValid)
+        // GET: api/Tokens/5
+        [HttpGet("{id}")]
+        public IActionResult GetToken([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(token);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TokenExists(token.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return BadRequest(ModelState);
             }
-            ViewData["ClassId"] = new SelectList(_context.ClassRoom, "Id", "Id", token.ClassId);
-            return View(token);
-        }
 
-        // GET: Tokens/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
+            var tokens = _context.Token.Where(x => x.ClassId == id);
+
+            if (tokens.Count() == 0)
             {
                 return NotFound();
             }
 
-            var token = await _context.Token
-                .Include(t => t.ClassRoom)
-                .SingleOrDefaultAsync(m => m.Id == id);
+            return Ok(tokens);
+        }
+
+        // PUT: api/Tokens/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutToken([FromRoute] int id, [FromBody] Token token)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (id != token.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(token).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!TokenExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        // POST: api/Tokens
+        [HttpPost]
+        public IActionResult PostToken([FromBody] TokenDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var token = new Token()
+            {
+                ClassId = dto.ClassId,
+                Duration = 15,
+                CreatedDateTime = DateTime.Now,
+                TokenValue = "TESTING123"
+            };
+
+            _context.Token.Add(token);
+            _context.SaveChanges();
+
+            return CreatedAtAction("GetToken", new { id = token.Id }, token);
+        }
+
+        // DELETE: api/Tokens/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteToken([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var token = await _context.Token.SingleOrDefaultAsync(m => m.Id == id);
             if (token == null)
             {
                 return NotFound();
             }
 
-            return Ok(token);
-        }
-
-        [HttpPost]
-        public IActionResult CreateToken([FromBody] TokenDto tokenDto)
-        {
-            WebService1SoapClient client = new WebService1SoapClient(
-                new BasicHttpBinding(BasicHttpSecurityMode.None),
-                new EndpointAddress("http://localhost/SOAPTokenGenerator/TokenGenerator.asmx")
-                );
-
-            Token token = new Token
-            {
-                Value = client.GenToken().ToString(),
-                Duration = 30,
-                CreatedDateTime = DateTime.Now,
-                ClassId = tokenDto.ClassId
-            };
-            _context.Token.Add(token);
-            _context.SaveChanges();
-            return Ok(token); 
-        }
-
-        // POST: Tokens/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var token = await _context.Token.SingleOrDefaultAsync(m => m.Id == id);
             _context.Token.Remove(token);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return Ok(token);
         }
 
         private bool TokenExists(int id)
