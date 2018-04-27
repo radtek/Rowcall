@@ -57,10 +57,10 @@
                     return;
                 }
 
-                var data {
+                var data = {
                     email: email,
                     password: pw,
-                    token: token,
+                    tokenValue: token,
                 };
 
                 $.ajax({
@@ -74,6 +74,7 @@
                     data: JSON.stringify(data),
                     success: function (response) {
                         console.log(response)
+                        alert(response);
                     },
                     error: function (error) {
                         $("#errorModal").modal()

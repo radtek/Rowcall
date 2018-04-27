@@ -122,6 +122,12 @@
                     },
                     success: function (response) {
                         console.log(response);
+                        var nameArray = Array(); 
+                        $(response).each(function (index, element) {
+                            console.log(element);
+                            nameArray.push(element.applicationUserId)
+                        });
+                        alert(nameArray);
                     },
                     error: function (error) {
                         console.log(error);

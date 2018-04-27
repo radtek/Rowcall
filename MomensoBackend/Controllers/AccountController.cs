@@ -50,7 +50,7 @@ namespace MomensoBackend.Controllers
             {
                 var user = await _userManager.FindByEmailAsync(model.Email);
 
-                if(user != null)
+                if (user != null)
                 {
                     var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, false, false);
                     if (result.Succeeded)
@@ -81,34 +81,32 @@ namespace MomensoBackend.Controllers
 
                     if (result.Succeeded)
                     {
-                        
                         var token = _dbContext.Token.Include(x => x.ClassRoom).SingleOrDefault(x => x.TokenValue == model.TokenValue);
 
-                        foreach (var classRoom in user.UserClass)
+                        if (user.UserClass.Any(x => x.ClassRoomId == token.ClassId))
                         {
-                            if(classRoom.ClassRoomId == token.ClassId)
+                            DateTime timeNow = DateTime.Now;
+                            DateTime durationTime = token.CreatedDateTime.AddMinutes(30);
+
+                            if (timeNow <= durationTime)
                             {
-                                DateTime timeNow = DateTime.Now;
-                                DateTime durationTime = token.CreatedDateTime.AddMinutes(30);
+                                UserToken userToken = new UserToken();
+                                userToken.ApplicationUserId = user.Id;
+                                userToken.TokenId = token.Id;
+                                _dbContext.UserToken.Add(userToken);
+                                _dbContext.SaveChanges(); 
 
-                                if (timeNow <= durationTime)
-                                {
-                                    UserToken userToken = new UserToken();
-                                    userToken.ApplicationUserId = user.Id;
-                                    userToken.TokenId = token.Id;
-
-                                    return Ok(userToken);
-                                }
-                                else
-                                {
-                                    return Json(new JsonResponse(false, "Duration of the token has expired."));
-                                }
+                                return Ok("You did it son!");
                             }
                             else
                             {
-                                return Json(new JsonResponse(false, "Student does not belong to this class."));
+                                return Json(new JsonResponse(false, "Duration of the token has expired."));
                             }
-                        } 
+                        }
+                        else
+                        {
+                            return Json(new JsonResponse(false, "Student does not belong to this class."));
+                        }
                     }
                 }
                 return Json(new JsonResponse(false, "Invalid login attempt."));
@@ -140,7 +138,7 @@ namespace MomensoBackend.Controllers
                 if (result.Succeeded)
                 {
                     // Lets add user to a role: 
-                    var role = ""; 
+                    var role = "";
                     if (model.Teacher)
                     {
                         await _userManager.AddToRoleAsync(user, "Teacher");
@@ -149,9 +147,9 @@ namespace MomensoBackend.Controllers
                     else
                     {
                         await _userManager.AddToRoleAsync(user, "Student");
-                        role = "Student"; 
+                        role = "Student";
                     }
-                     
+
 
                     await _signInManager.SignInAsync(user, false);
                     return Json(new JsonResponse(true, await GenerateJwtToken(model.Email, user, role)));
@@ -171,7 +169,7 @@ namespace MomensoBackend.Controllers
             {
                 new Claim(JwtRegisteredClaimNames.Sub, email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id), 
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Role, roleName)
             };
 
