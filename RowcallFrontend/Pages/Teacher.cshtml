@@ -30,9 +30,6 @@
             </h3>
             <button class="btn btn-outline-success w-100" type="button" id="createTokenBtn" style="margin-bottom: 1rem;">Generate new token</button>
             <div class="list-group" id="listGroupToken">
-                <a href="#" class="list-group-item list-group-item-action">
-                    <b>Token: </b> AFGJ452FD, 20-04-2018 13:03
-                </a>
             </div>
         </div>
 
@@ -89,7 +86,7 @@
                     },
                     data: JSON.stringify(data),
                     success: function (response) {
-                        console.log(response); 
+                        getTokens();
                     },
                     error: function (error) {
                         console.log(error);
@@ -241,6 +238,8 @@
         }
 
         function getTokens() {
+            $("#listGroupToken").html(" ");
+
             var token = getCookie("token");
             token = 'Bearer ' + token;
 
@@ -256,9 +255,8 @@
                     'Authorization': token
                 },
                 success: function (response) {
-                    $("#listGroupToken").html("");
-                    console.log(response);
-
+                   
+                    console.log("IT SHOULD CLEAR THE TOKEN GROUP NOW!!!");
                     $(response).each(function (index, element) {
                         $("#listGroupToken").append('<a href="#" class="list-group-item list-group-item-action"> <b>Token: </b> ' + element.tokenValue + ', ' + element.createdDateTime +'</a>');
                     });

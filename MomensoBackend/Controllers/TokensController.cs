@@ -97,14 +97,17 @@ namespace RowcallBackend.Controllers
                 return BadRequest(ModelState);
             }
 
+            WebService1SoapClient client = new WebService1SoapClient(
+                 new BasicHttpBinding(BasicHttpSecurityMode.None),
+                 new EndpointAddress("http://localhost/SOAPTokenGenerator/TokenGenerator.asmx")
+                 );
+
             var token = new Token()
             {
-                Value = client.GenerateToken(),
                 Duration = 30,
                 ClassId = dto.ClassId,
-                Duration = 15,
                 CreatedDateTime = DateTime.Now,
-                TokenValue = "TESTING123"
+                TokenValue = client.GenerateToken()
             };
 
             _context.Token.Add(token);
