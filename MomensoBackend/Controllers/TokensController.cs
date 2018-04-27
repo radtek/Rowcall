@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.ServiceModel;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MomensoBackend.Data;
 using MomensoBackend.Models;
 using RowcallBackend.Models;
-using TokenGenerator;
 
 namespace RowcallBackend.Controllers
 {
-    [Produces("application/json")]
-    [Route("api/Tokens")]
     public class TokensController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -35,22 +32,45 @@ namespace RowcallBackend.Controllers
             return tokens;
         }
 
-        // GET: api/Tokens/5
-        [HttpGet("{id}")]
-        public IActionResult GetToken([FromRoute] int id, int classId)
-        {
-            WebService1SoapClient client = new WebService1SoapClient(
-                new BasicHttpBinding(BasicHttpSecurityMode.None),
-                new EndpointAddress("http://localhost/SOAPTokenGenerator/TokenGenerator.asmx")
-                );
-
-            Token token = new Token
+            if (ModelState.IsValid)
             {
-                Value = client.GenToken(),
-                Duration = 30,
-                CreatedDateTime = DateTime.Now,
-                ClassId = classId
-            };
+                try
+                {
+                    _context.Update(token);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!TokenExists(token.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            ViewData["ClassId"] = new SelectList(_context.ClassRoom, "Id", "Id", token.ClassId);
+            return View(token);
+        }
+
+        // GET: Tokens/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var token = await _context.Token
+                .Include(t => t.ClassRoom)
+                .SingleOrDefaultAsync(m => m.Id == id);
+            if (token == null)
+            {
+                return NotFound();
+            }
 
             return Ok(token);
         }
@@ -75,11 +95,20 @@ namespace RowcallBackend.Controllers
             return Ok(token); 
         }
 
+        // POST: Tokens/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var token = await _context.Token.SingleOrDefaultAsync(m => m.Id == id);
+            _context.Token.Remove(token);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
 
         private bool TokenExists(int id)
         {
             return _context.Token.Any(e => e.Id == id);
         }
     }
-
 }

@@ -8,6 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 using MomensoBackend.Data;
 using MomensoBackend.Models;
 using MomensoBackend.Models.AccountModels;
+using RowcallBackend.Models;
+using RowcallBackend.Models.AccountModels;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -62,7 +64,65 @@ namespace MomensoBackend.Controllers
                 return Json(new JsonResponse(false, "Invalid login attempt."));
             }
             var modelError = ModelState.Values.SelectMany(x => x.Errors).First().ErrorMessage;
+
             return Json(new JsonResponse(false, modelError));
+        }
+
+        [HttpPost]
+        public async Task<object> StudentLogin([FromBody] StudentLoginModel model, int durationMinutes)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = _dbContext.Users.Include(x => x.UserClass).SingleOrDefault(x => x.Email == model.Email);
+
+                if (user != null)
+                {
+                    var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, false, false);
+
+                    if (result.Succeeded)
+                    {
+                        
+                        var token = _dbContext.Token.Include(x => x.ClassRoom).SingleOrDefault(x => x.Value == model.TokenValue);
+
+                        foreach (var classRoom in user.UserClass)
+                        {
+                            if(classRoom.ClassRoomId == token.ClassId)
+                            {
+                                DateTime timeNow = DateTime.Now;
+                                DateTime durationTime = token.CreatedDateTime.AddMinutes(durationMinutes);
+
+                                if (timeNow < durationTime)
+                                {
+                                    UserToken userToken = new UserToken();
+                                    userToken.ApplicationUserId = user.Id;
+                                    userToken.TokenId = token.Id;
+
+                                    return Ok(userToken);
+                                }
+                                else
+                                {
+                                    return Json(new JsonResponse(false, "Duration of the token has expired."));
+                                }
+                            }
+                            else
+                            {
+                                return Json(new JsonResponse(false, "Student does not belong to this class."));
+                            }
+                        } 
+                    }
+                }
+                return Json(new JsonResponse(false, "Invalid login attempt."));
+            }
+            var modelError = ModelState.Values.SelectMany(x => x.Errors).First().ErrorMessage;
+
+            return Json(new JsonResponse(false, modelError));
+        }
+
+        private bool IsTokenValidForStudent()
+        {
+            bool result = false;
+
+            return result;
         }
 
         [HttpPost]
