@@ -106,6 +106,36 @@
                 getTokens(); 
             });
 
+            $(document).on("click", ".token-item", function () {
+                var id = $(this).attr("id"); 
+                var token = getCookie("token");
+                token = 'Bearer ' + token;
+
+                $.ajax({
+                    url: "http://localhost:2265/api/tokens/getusers/" + id,
+                    method: "GET",
+                    dataType: 'json',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    },
+                    success: function (response) {
+                        console.log(response);
+                        var nameArray = Array(); 
+                        $(response).each(function (index, element) {
+                            console.log(element);
+                            nameArray.push(element.applicationUserId)
+                        });
+                        alert(nameArray);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+
+            });
+
             $("#studentBtn").hide();
             getClasses();
 
@@ -255,12 +285,9 @@
                     'Authorization': token
                 },
                 success: function (response) {
-                   
-                    console.log("IT SHOULD CLEAR THE TOKEN GROUP NOW!!!");
                     $(response).each(function (index, element) {
-                        $("#listGroupToken").append('<a href="#" class="list-group-item list-group-item-action"> <b>Token: </b> ' + element.tokenValue + ', ' + element.createdDateTime +'</a>');
+                        $("#listGroupToken").append('<a href="#" class="list-group-item list-group-item-action token-item" id="'+ element.id +'"> <b>Token: </b> ' + element.tokenValue + ', ' + element.createdDateTime +'</a>');
                     });
-
                 },
                 error: function (error) {
                     console.log(error);
