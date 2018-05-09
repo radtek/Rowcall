@@ -80,9 +80,11 @@ namespace MomensoBackend.Controllers
                     var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, false, false);
 
                     if (result.Succeeded)
-                    {
-                        
+                    {             
                         var token = _dbContext.Token.Include(x => x.ClassRoom).SingleOrDefault(x => x.TokenValue == model.TokenValue);
+
+                        if(token == null)
+                            return Json(new JsonResponse(false, "Token does not exist!"));
 
                         foreach (var classRoom in user.UserClass)
                         {

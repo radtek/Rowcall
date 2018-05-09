@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -101,6 +100,7 @@ namespace RowcallBackend.Controllers
                  new BasicHttpBinding(BasicHttpSecurityMode.None),
                  new EndpointAddress("http://localhost/SOAPTokenGenerator/TokenGenerator.asmx")
                  );
+
 
             var token = new Token()
             {
