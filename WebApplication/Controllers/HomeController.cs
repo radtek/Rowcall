@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,12 @@ using WebApplication.Models.HomeViewModels;
 
 namespace WebApplication.Controllers
 {
+    public class LoginDto
+    {
+        public string Email { get; set; }
+        public string Password { get; set; } 
+    }
+
     public class HomeController : Controller
     {
         [HttpGet]
@@ -21,13 +28,15 @@ namespace WebApplication.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(IndexViewModel model)
+        public async Task<IActionResult> Index(IndexViewModel model)
         {
             if (ModelState.IsValid)
             {
-                // Call Account API here to login and get the login token...
                 var email = model.Email;
                 var password = model.Password;
+                var jsonObj = new { email, password }; 
+
+
 
                 // Verify here...
 
