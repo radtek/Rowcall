@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RowcallBackend", "MomensoBa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SOAPTokenGenerator", "SOAPTokenGenerator\SOAPTokenGenerator.csproj", "{A836BAAE-4885-48A4-8F31-B2D8B4DA91C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RowcallFrontend", "RowcallFrontend\RowcallFrontend.csproj", "{6989148E-8CEA-4054-959D-9953F65DE578}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RowcallFrontend", "RowcallFrontend\RowcallFrontend.csproj", "{6989148E-8CEA-4054-959D-9953F65DE578}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TokenAPI", "TokenAPI\TokenAPI.csproj", "{B85CA655-77E3-46AB-B6C4-F06A37D9DC43}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{6989148E-8CEA-4054-959D-9953F65DE578}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6989148E-8CEA-4054-959D-9953F65DE578}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6989148E-8CEA-4054-959D-9953F65DE578}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B85CA655-77E3-46AB-B6C4-F06A37D9DC43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B85CA655-77E3-46AB-B6C4-F06A37D9DC43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B85CA655-77E3-46AB-B6C4-F06A37D9DC43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B85CA655-77E3-46AB-B6C4-F06A37D9DC43}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
