@@ -49,11 +49,23 @@ namespace WebApplication.Controllers
             return View(model);  
         }
 
+        [HttpGet]
         public IActionResult Student()
         {
             ViewData["Message"] = "Your application description page.";
+            var model = new StudentViewModel();
+            return View(model);
+        }
 
-            return View();
+        [HttpPost]
+        public IActionResult Student(StudentViewModel model)
+        {
+            var email = model.Email;
+            var password = model.Password;
+            var token = model.Token;
+            var longitude = model.Longitude;
+            var latitude = model.Latitude;
+            return View(model); 
         }
 
         public IActionResult Error()
