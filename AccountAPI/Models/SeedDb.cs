@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
-using MomensoBackend.Data;
+﻿using AccountAPI.Data;
+using AccountAPI.Models;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;

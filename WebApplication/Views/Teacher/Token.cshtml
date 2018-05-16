@@ -6,9 +6,10 @@
 <div class="row">
     <div class="col-12">
         <br />
-        <form asp-controller="Teacher" asp-action="CreateClass">
+        <form asp-controller="Teacher" asp-action="CreateToken" method="post">
             <div class="input-group mb-3">
                 <div class="input-group-append">
+                    <input type="hidden" asp-for="ClassId" />
                     <button class="btn btn-danger" onclick="window.history.back();" style="margin-right: 10px;" type="button">Go back!</button>
                     <button type="submit" class="btn btn-outline-secondary">Add Token</button>
                 </div>

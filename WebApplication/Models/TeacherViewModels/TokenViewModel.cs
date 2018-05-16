@@ -8,6 +8,7 @@ namespace WebApplication.Models.TeacherViewModels
 {
     public class TokenViewModel
     {
+        public string ClassId { get; set; } 
         public ICollection<Token> Tokens { get; set; } 
     }
 }
