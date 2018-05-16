@@ -2,30 +2,35 @@
 @{
     ViewData["Title"] = "Home Page";
 }
+
 <div class="row">
-    <div class="col-md-offset-3 col-md-6">
-        <form style="padding-top: 15vh; padding-bottom: 10px;" asp-controller="Home" asp-action="Index">
-            <h2 class="text-center">Teacher login</h2>
-            <br /><br />
-            <div class="form-group">
-                <label for="exampleInputEmail1">Email address</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" asp-for="Email" placeholder="Email">
-            </div>
-            <div class="form-group">
-                <label for="exampleInputPassword1">Password</label>
-                <input type="password" class="form-control" id="exampleInputPassword1" asp-for="Password" placeholder="Password">
-            </div>
-            <button type="submit" class="btn btn-default">Submit</button>
-        </form>
+    <div class="col-6 mx-auto">
+        <div style="padding-top: 15vh;">
+            <h2>Teacher login</h2>
+            <hr />
+            <form asp-controller="Home" asp-action="Index" method="post">
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" class="form-control" asp-for="Email" placeholder="Email">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="form-control" asp-for="Password" placeholder="Password">
+                </div>
+                <button type="submit" class="btn btn-primary mb-2" id="teacherLoginBtn">Login</button>
+            </form>
 
-        @{ 
-            if (ViewData["Error"] != null)
-            {
-                <p class="text-danger">
-                    @ViewData["Error"]
-                </p>
+            @{
+                if (ViewData["Error"] != null)
+                {
+                    <p class="text-danger">
+                        @ViewData["Error"]
+                    </p>
+                }
             }
-        }
-
+        </div>
     </div>
 </div>
+
+
+

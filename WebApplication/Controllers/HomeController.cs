@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +16,14 @@ using WebApplication.Models.HomeViewModels;
 
 namespace WebApplication.Controllers
 {
-    public class LoginDto
+    [DataContract]
+    public class LoginApiData
     {
-        public string Email { get; set; }
-        public string Password { get; set; } 
+        [DataMember(Name = "succeded")]
+        public bool Succeded { get; set; }
+
+        [DataMember(Name = "response")]
+        public string Response { get; set; } 
     }
 
     public class HomeController : Controller
@@ -36,13 +44,28 @@ namespace WebApplication.Controllers
                 var password = model.Password;
                 var jsonObj = new { email, password }; 
 
+                using(HttpClient client = new HttpClient())
+                {
+                    var response = await client.PostAsJsonAsync("http://localhost:11743/account/login", new { email, password });
+                    var resultString = await response.Content.ReadAsStringAsync();
 
+                    using (MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(resultString)))
+                    {
+                        DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(LoginApiData));
+                        LoginApiData obj = (LoginApiData)serializer.ReadObject(stream);
 
-                // Verify here...
-
-                HttpContext.Session.SetString("token", "MyLoginToken"); 
-
-                return RedirectToAction("Index", "Teacher");
+                        if (obj.Succeded)
+                        {
+                            HttpContext.Session.SetString("token", obj.Response);
+                            return RedirectToAction("Index", "Teacher");
+                        }
+                        else
+                        {
+                            ViewData["Error"] = obj.Response;
+                            return View(model); 
+                        }
+                    }
+                }
             }
             var error = ModelState.Values.FirstOrDefault(x => x.ValidationState == ModelValidationState.Invalid).Errors.First().ErrorMessage;
             ViewData["Error"] = error; 
