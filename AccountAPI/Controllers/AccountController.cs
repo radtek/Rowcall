@@ -22,6 +22,9 @@ namespace AccountAPI.Controllers
     [EnableCors("SiteCorsPolicy")]
     public class AccountController : Controller
     {
+        // KEA  55.704052, 12.537506
+        private const double latitudeKEA = 55.704052;
+        private const double longtitudeKEA = 12.537506;
         private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -86,7 +89,9 @@ namespace AccountAPI.Controllers
                             DateTime timeNow = DateTime.Now;
                             DateTime durationTime = token.CreatedDateTime.AddMinutes(30);
 
-                            if (timeNow <= durationTime)
+                            double distFromKEA = Distance(latitudeKEA, longtitudeKEA, model.Latitude, model.Longtitude);
+
+                            if ((timeNow <= durationTime) && (distFromKEA <= 0.5))
                             {
                                 UserToken userToken = new UserToken();
                                 userToken.ApplicationUserId = user.Id;
@@ -184,6 +189,27 @@ namespace AccountAPI.Controllers
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+        
+
+        private static double Distance(double lat1, double lon1, double lat2, double lon2)
+        {
+            double theta = lon1 - lon2;
+            double dist = Math.Sin(Deg2Rad(lat1)) * Math.Sin(Deg2Rad(lat2)) + Math.Cos(Deg2Rad(lat1)) * Math.Cos(Deg2Rad(lat2)) * Math.Cos(Deg2Rad(theta));
+            dist = Math.Acos(dist);
+            dist = Rad2Deg(dist);
+            dist = (dist * 60 * 1.1515) / 0.6213711922; // Miles to Km conversion
+            return (dist);
+        }
+
+        private static double Deg2Rad(double deg)
+        {
+            return (deg * Math.PI / 180.0);
+        }
+
+        private static double Rad2Deg(double rad)
+        {
+            return (rad * 180.0 / Math.PI);
         }
     }
 }

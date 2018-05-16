@@ -14,5 +14,10 @@ namespace AccountAPI.Models.AccountModels
         [Required]
         public string TokenValue { get; set; }
 
+        [Required]
+        public double Longtitude { get; set; }
+
+        [Required]
+        public double Latitude { get; set; }
     }
 }
