@@ -25,6 +25,7 @@ namespace AccountAPI.Controllers
         // KEA  55.704052, 12.537506
         private const double latitudeKEA = 55.704052;
         private const double longtitudeKEA = 12.537506;
+
         private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -117,13 +118,6 @@ namespace AccountAPI.Controllers
             var modelError = ModelState.Values.SelectMany(x => x.Errors).First().ErrorMessage;
 
             return Json(new JsonResponse(false, modelError));
-        }
-
-        private bool IsTokenValidForStudent()
-        {
-            bool result = false;
-
-            return result;
         }
 
         [HttpPost]
