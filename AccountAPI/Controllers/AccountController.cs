@@ -45,7 +45,7 @@ namespace AccountAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<object> Login([FromBody] LoginModel model)
+        public async Task<object> TeacherLogin([FromBody] LoginModel model)
         {
             if (ModelState.IsValid)
             {
@@ -56,6 +56,11 @@ namespace AccountAPI.Controllers
                     var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, false, false);
                     if (result.Succeeded)
                     {
+                        if(!await _userManager.IsInRoleAsync(user, "Teacher"))
+                        {
+                            return Json(new JsonResponse(false, "Invalid login attempt. You are not a teacher!"));
+                        }
+
                         var roles = await _userManager.GetRolesAsync(user);
                         var role = roles.First();
 
