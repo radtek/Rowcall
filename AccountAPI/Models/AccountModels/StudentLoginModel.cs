@@ -2,15 +2,8 @@
 
 namespace AccountAPI.Models.AccountModels
 {
-    public class StudentLoginModel
+    public class StudentLoginModel:LoginModel
     {
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
-
-        [Required]
-        public string Password { get; set; }
-
         [Required]
         public string TokenValue { get; set; }
 
