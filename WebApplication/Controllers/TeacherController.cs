@@ -9,6 +9,7 @@ namespace WebApplication.Controllers
 {
     public class TeacherController : Controller
     {
+        [HttpGet]
         public IActionResult Index()
         {
             ViewData["DisplayToken"] = HttpContext.Session.GetString("token"); 
