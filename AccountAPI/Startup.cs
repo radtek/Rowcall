@@ -35,6 +35,7 @@ namespace AccountAPI
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+
             services.Configure<IdentityOptions>(options =>
             {
                 // Password settings
@@ -100,6 +101,7 @@ namespace AccountAPI
             app.UseCors("SiteCorsPolicy");
             app.UseAuthentication();
             app.UseMvc();
+            app.AddEfDiagrams<ApplicationDbContext>();
 
             //SeedDb.InitDb(context);
 

@@ -25,7 +25,6 @@ namespace AccountAPI.Data
 
             modelBuilder.Entity<UserClass>().HasKey(k => new { k.ApplicationUserId, k.ClassRoomId });
             modelBuilder.Entity<UserToken>().HasKey(k => new { k.ApplicationUserId, k.TokenId });
-
         }
     }
 }
