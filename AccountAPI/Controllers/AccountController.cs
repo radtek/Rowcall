@@ -22,7 +22,7 @@ namespace AccountAPI.Controllers
     [EnableCors("SiteCorsPolicy")]
     public class AccountController : Controller
     {
-        //  55.704052, 12.537506
+        // KEA  55.704052, 12.537506
         private const double latitudeKEA = 55.704052;
         private const double longtitudeKEA = 12.537506;
         private readonly ApplicationDbContext _dbContext;
@@ -198,7 +198,7 @@ namespace AccountAPI.Controllers
             double dist = Math.Sin(Deg2Rad(lat1)) * Math.Sin(Deg2Rad(lat2)) + Math.Cos(Deg2Rad(lat1)) * Math.Cos(Deg2Rad(lat2)) * Math.Cos(Deg2Rad(theta));
             dist = Math.Acos(dist);
             dist = Rad2Deg(dist);
-            dist = (dist * 60 * 1.1515) / 0.6213711922; // Miles to Km
+            dist = (dist * 60 * 1.1515) / 0.6213711922; // Miles to Km conversion
             return (dist);
         }
 
