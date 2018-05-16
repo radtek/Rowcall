@@ -10,16 +10,15 @@ using TokenAPI.Models;
 using TokenAPI.Data;
 using SOAPservice;
 
-
-
 namespace TokenAPI.Controllers
 {
-    public class TokenAPI : Controller
+    [Route("api/[controller]")]
+    public class TokensController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public TokenAPI(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public TokensController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -28,7 +27,6 @@ namespace TokenAPI.Controllers
 
         // POST: api/Tokens
         [HttpPost]
-        [Route("/api/Tokens/PostToken")]
         public IActionResult PostToken([FromBody] TokenDto dto)
         {
             if (!ModelState.IsValid)
@@ -55,6 +53,13 @@ namespace TokenAPI.Controllers
             _context.SaveChanges();
 
             return CreatedAtAction("GetToken", new { id = token.Id }, token);
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetTokens(int id)
+        {
+            var tokens = _context.Token.Where(x => x.ClassId == id);
+            return Json(tokens); 
         }
     }
 }
