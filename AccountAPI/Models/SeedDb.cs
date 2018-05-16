@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using MomensoBackend.Data;
+using AccountAPI.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MomensoBackend.Models
+namespace AccountAPI.Models
 {
     public static class SeedDb
     {
@@ -39,6 +39,7 @@ namespace MomensoBackend.Models
             {
                 dbContext.Roles.Add(new IdentityRole() { Name = "Student", NormalizedName = "STUDENT" });
                 dbContext.Roles.Add(new IdentityRole() { Name = "Teacher", NormalizedName = "TEACHER" });
+                dbContext.Roles.Add(new IdentityRole() { Name = "Admin", NormalizedName = "ADMIN" });
                 dbContext.SaveChanges(); 
             }
         }
