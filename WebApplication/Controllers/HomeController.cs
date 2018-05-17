@@ -91,9 +91,9 @@ namespace WebApplication.Controllers
                 var email = model.Email;
                 var password = model.Password;
                 var token = model.Token;
-                var longitude = model.Longitude;
+                var longtitude = model.Longitude;
                 var latitude = model.Latitude;
-                var jsonObj = new { email, password, token, longitude, latitude };
+                var jsonObj = new { email, password, token, longtitude, latitude };
 
                 using (HttpClient client = new HttpClient())
                 {

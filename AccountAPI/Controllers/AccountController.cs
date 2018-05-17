@@ -57,7 +57,7 @@ namespace AccountAPI.Controllers
                     var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, false, false);
                     if (result.Succeeded)
                     {
-                        if(!await _userManager.IsInRoleAsync(user, "Teacher"))
+                        if (!await _userManager.IsInRoleAsync(user, "Teacher"))
                         {
                             return Json(new JsonResponse(false, "Invalid login attempt. You are not a teacher!"));
                         }
@@ -88,7 +88,11 @@ namespace AccountAPI.Controllers
 
                     if (result.Succeeded)
                     {
-                        var token = _dbContext.Token.Include(x => x.ClassRoom).SingleOrDefault(x => x.TokenValue == model.TokenValue);
+                        var token = _dbContext.Token.Include(x => x.ClassRoom).SingleOrDefault(x => x.TokenValue == model.Token);
+                        if(token == null)
+                        {
+                            return Json(new JsonResponse(false, "No token with that value!"));
+                        }
 
                         if (user.UserClass.Any(x => x.ClassRoomId == token.ClassId))
                         {
@@ -97,19 +101,26 @@ namespace AccountAPI.Controllers
 
                             double distFromKEA = Distance(latitudeKEA, longtitudeKEA, model.Latitude, model.Longtitude);
 
-                            if ((timeNow <= durationTime) && (distFromKEA <= 0.5))
+                            if (distFromKEA <= 3)
                             {
-                                UserToken userToken = new UserToken();
-                                userToken.ApplicationUserId = user.Id;
-                                userToken.TokenId = token.Id;
-                                _dbContext.UserToken.Add(userToken);
-                                _dbContext.SaveChanges(); 
+                                if ((timeNow <= durationTime))
+                                {
+                                    UserToken userToken = new UserToken();
+                                    userToken.ApplicationUserId = user.Id;
+                                    userToken.TokenId = token.Id;
+                                    _dbContext.UserToken.Add(userToken);
+                                    _dbContext.SaveChanges();
 
-                                return Ok("You did it son!");
+                                    return Json(new JsonResponse(true, "You have checked in!"));
+                                }
+                                else
+                                {
+                                    return Json(new JsonResponse(false, "Duration of the token has expired."));
+                                }
                             }
                             else
                             {
-                                return Json(new JsonResponse(false, "Duration of the token has expired."));
+                                return Json(new JsonResponse(false, "You are too far away you cheater! You distance to kea is: " + distFromKEA));
                             }
                         }
                         else
@@ -189,7 +200,7 @@ namespace AccountAPI.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-        
+
 
         private static double Distance(double lat1, double lon1, double lat2, double lon2)
         {

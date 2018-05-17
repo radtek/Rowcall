@@ -55,27 +55,27 @@ namespace TokenAPI.Controllers
             return CreatedAtAction("GetToken", new { id = token.Id }, token);
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public IActionResult GetTokens(int id)
         {
             var tokens = _context.Token.Where(x => x.ClassId == id);
             return Json(tokens); 
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetStudentsForToken(int tokenId)
-        {
-            var classroom = _context.ClassRoom.First(x => x.Id == _context.Token.First(y => y.Id == tokenId).Id);
+        //[HttpGet]
+        //public async Task<IActionResult> GetStudentsForToken(int tokenId)
+        //{
+        //    var classroom = _context.ClassRoom.First(x => x.Id == _context.Token.First(y => y.Id == tokenId).Id);
 
-            var classRoom = await _context.ClassRoom
-                .Include(x => x.Students)
-                .ThenInclude(x => x.ApplicationUser)
-                .SingleOrDefaultAsync(x => x.Id == classroom.Id);
+        //    var classRoom = await _context.ClassRoom
+        //        .Include(x => x.Students)
+        //        .ThenInclude(x => x.ApplicationUser)
+        //        .SingleOrDefaultAsync(x => x.Id == classroom.Id);
 
-            var students = classRoom.Students.Select(x => x.ApplicationUser.Email).ToList();
+        //    var students = classRoom.Students.Select(x => x.ApplicationUser.Email).ToList();
 
-            return Json(students);
-        }
+        //    return Json(students);
+        //}
 
     }
 }
