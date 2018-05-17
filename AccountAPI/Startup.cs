@@ -93,6 +93,7 @@ namespace AccountAPI
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                //app.AddEfDiagrams<ApplicationDbContext>();
             }
 
             // ********************
@@ -101,7 +102,7 @@ namespace AccountAPI
             app.UseCors("SiteCorsPolicy");
             app.UseAuthentication();
             app.UseMvc();
-            app.AddEfDiagrams<ApplicationDbContext>();
+            //app.AddEfDiagrams<ApplicationDbContext>();
 
             //SeedDb.InitDb(context);
 
