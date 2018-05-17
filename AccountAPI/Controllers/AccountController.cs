@@ -25,6 +25,7 @@ namespace AccountAPI.Controllers
         // KEA  55.704052, 12.537506
         private const double latitudeKEA = 55.704052;
         private const double longtitudeKEA = 12.537506;
+
         private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -45,7 +46,7 @@ namespace AccountAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<object> Login([FromBody] LoginModel model)
+        public async Task<object> TeacherLogin([FromBody] LoginModel model)
         {
             if (ModelState.IsValid)
             {
@@ -56,6 +57,11 @@ namespace AccountAPI.Controllers
                     var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, false, false);
                     if (result.Succeeded)
                     {
+                        if(!await _userManager.IsInRoleAsync(user, "Teacher"))
+                        {
+                            return Json(new JsonResponse(false, "Invalid login attempt. You are not a teacher!"));
+                        }
+
                         var roles = await _userManager.GetRolesAsync(user);
                         var role = roles.First();
 
@@ -117,13 +123,6 @@ namespace AccountAPI.Controllers
             var modelError = ModelState.Values.SelectMany(x => x.Errors).First().ErrorMessage;
 
             return Json(new JsonResponse(false, modelError));
-        }
-
-        private bool IsTokenValidForStudent()
-        {
-            bool result = false;
-
-            return result;
         }
 
         [HttpPost]

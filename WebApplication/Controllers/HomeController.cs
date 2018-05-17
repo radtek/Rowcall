@@ -31,8 +31,11 @@ namespace WebApplication.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var model = new IndexViewModel();
-            return View(model);
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("token")))
+            {
+                return View();
+            }
+            return RedirectToAction("Index", "Teacher");
         }
 
         [HttpPost]
@@ -46,7 +49,7 @@ namespace WebApplication.Controllers
 
                 using(HttpClient client = new HttpClient())
                 {
-                    var response = await client.PostAsJsonAsync("http://localhost:11743/account/login", new { email, password });
+                    var response = await client.PostAsJsonAsync("http://localhost:11743/account/teacherlogin", new { email, password });
                     var resultString = await response.Content.ReadAsStringAsync();
 
                     using (MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(resultString)))
