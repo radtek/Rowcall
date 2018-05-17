@@ -26,27 +26,20 @@
             <button type="submit" class="btn btn-primary mb-2">Submit</button>
         </form>
         @{
-        if (ViewData["Success"] != null)
-        {
-            <p class="text-success">
-                @ViewData["Success"]
-            </p>
-
-            } else if (ViewData["Fail"] != null)
+            if (ViewData["Success"] != null)
             {
-                <p class="text-fail">
-                    @ViewData["Fail"]
+                <p class="text-success">
+                    @ViewData["Success"]
                 </p>
-
-            } else
+            }
+            if (ViewData["Error"] != null)
             {
-                <p class="text-error">
+                <p class="text-danger">
                     @ViewData["Error"]
                 </p>
-
             }
 
-    <div id="mapholder"></div>
+            <div id="mapholder"></div>
         }
     </div>
 </div>
@@ -64,14 +57,14 @@
         }
     }
     function showPosition(position) {
-        x.value = position.coords.latitude;
-        y.value = position.coords.longitude;
+        x.value = position.coords.longitude;
+        y.value = position.coords.latitude;
         var latlon = position.coords.latitude + "," + position.coords.longitude;
         var img_url = "https://maps.googleapis.com/maps/api/staticmap?center=" + latlon + "&zoom=14&size=400x300&key=AIzaSyAs_8NLkMcbP1YXCBaLckts6XN0fYcJ6aY";
         document.getElementById("mapholder").innerHTML = "<img src='" + img_url + "'>";
     }
 
     getLocation()
-    
-        
+
+
 </script>

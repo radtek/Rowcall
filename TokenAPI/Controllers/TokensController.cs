@@ -70,10 +70,10 @@ namespace TokenAPI.Controllers
 
             var classroom = _context.ClassRoom.First(x => x.Id == token.ClassId);
 
-            var classRoom = await _context.ClassRoom
-                .Include(x => x.Students)
-                .ThenInclude(x => x.ApplicationUser)
-                .SingleOrDefaultAsync(x => x.Id == classroom.Id);
+        //    var classRoom = await _context.ClassRoom
+        //        .Include(x => x.Students)
+        //        .ThenInclude(x => x.ApplicationUser)
+        //        .SingleOrDefaultAsync(x => x.Id == classroom.Id);
 
             var students = classRoom.Students.Select(x => x.ApplicationUser).ToList();
 
