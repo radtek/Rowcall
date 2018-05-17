@@ -114,14 +114,14 @@ namespace WebApplication.Controllers
                         }
                         else
                         {
-                            ViewData["Error"] = obj.Response;
+                            ViewData["Fail"] = "You have failed to check in, i am not mad, i am disapointed";
                             return View(model);
                         }
                     }
                 }
             }
             var error = ModelState.Values.FirstOrDefault(x => x.ValidationState == ModelValidationState.Invalid).Errors.First().ErrorMessage;
-            ViewData["Error"] = error;
+            ViewData["Error"] = "I have failed you, and for that i am sorry: " + error;
             return View(model);
 
         }

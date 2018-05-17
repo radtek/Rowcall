@@ -62,20 +62,32 @@ namespace TokenAPI.Controllers
             return Json(tokens); 
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetStudentsForToken(int tokenId)
-        //{
-        //    var classroom = _context.ClassRoom.First(x => x.Id == _context.Token.First(y => y.Id == tokenId).Id);
+        [Route("getStudentsForToken/{tokenId}")]
+        [HttpGet]
+        public async Task<IActionResult> GetStudentsForToken(int tokenId)
+        {
+            var token = _context.Token.First(y => y.Id == tokenId);
+
+            var classroom = _context.ClassRoom.First(x => x.Id == token.ClassId);
 
         //    var classRoom = await _context.ClassRoom
         //        .Include(x => x.Students)
         //        .ThenInclude(x => x.ApplicationUser)
         //        .SingleOrDefaultAsync(x => x.Id == classroom.Id);
 
-        //    var students = classRoom.Students.Select(x => x.ApplicationUser.Email).ToList();
+            var students = classRoom.Students.Select(x => x.ApplicationUser).ToList();
 
-        //    return Json(students);
-        //}
+            var userToken = _context.UserToken.First(x => x.TokenId == tokenId);
+            var checkedInStudents = _context.Users.Select(y => y.UserTokens
+            .First(x => x.ApplicationUserId == userToken.ApplicationUserId).ApplicationUser)
+            .ToList();
 
+            var missingStudents = students.Intersect(checkedInStudents).ToList(); 
+
+            return Json(new{
+                            presentStudents = checkedInStudents,
+                            notPresentStudents = missingStudents
+                            });
+        }
     }
 }
