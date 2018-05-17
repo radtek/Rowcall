@@ -55,13 +55,14 @@ namespace TokenAPI.Controllers
             return CreatedAtAction("GetToken", new { id = token.Id }, token);
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public IActionResult GetTokens(int id)
         {
             var tokens = _context.Token.Where(x => x.ClassId == id);
             return Json(tokens); 
         }
 
+        [Route("getStudentsForToken/{tokenId}")]
         [HttpGet]
         public async Task<IActionResult> GetStudentsForToken(int tokenId)
         {
