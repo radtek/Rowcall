@@ -31,7 +31,20 @@
             <p class="text-success">
                 @ViewData["Success"]
             </p>
-    }
+
+            } else if (ViewData["Fail"] != null)
+            {
+                <p class="text-fail">
+                    @ViewData["Fail"]
+                </p>
+
+            } else
+            {
+                <p class="text-error">
+                    @ViewData["Error"]
+                </p>
+
+            }
 
     <div id="mapholder"></div>
         }

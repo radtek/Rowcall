@@ -104,7 +104,7 @@ namespace ClassroomAPI.Controllers
                 .Include(x => x.Students)
                 .ThenInclude(x => x.ApplicationUser)
                 .SingleOrDefaultAsync(x => x.Id == classRoomId);
-            var students = classRoom.Students.Select(x => x.ApplicationUser.Email).ToList();
+            var students = classRoom.Students.Select(x => x.ApplicationUser.Email); 
             return Json(students); 
         }
 
