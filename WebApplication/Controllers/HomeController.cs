@@ -97,7 +97,7 @@ namespace WebApplication.Controllers
 
                 using (HttpClient client = new HttpClient())
                 {
-                    var response = await client.PostAsJsonAsync("http://localhost:11473/account/StudentLogin", jsonObj);
+                    var response = await client.PostAsJsonAsync("http://localhost:11743/account/studentlogin", jsonObj);
                     var resultString = await response.Content.ReadAsStringAsync();
 
                     using (MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(resultString)))
