@@ -52,7 +52,7 @@ namespace WebApplication.Controllers
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
-                var url = "http://localhost:11173/api/tokens/" + id; 
+                var url = "http://localhost:11173/api/tokens/" + id;
                 var response = await client.GetStringAsync(url);
                 var result = JsonConvert.DeserializeObject<ICollection<Token>>(response);
                 var model = new TokenViewModel() { Tokens = result, ClassId = id };
@@ -63,11 +63,11 @@ namespace WebApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateToken(string classid)
         {
-            using (HttpClient client = new HttpClient()) 
+            using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
                 var response = await client.PostAsJsonAsync("http://localhost:11173/api/tokens", new { ClassId = classid });
-                return RedirectToAction("Index", "Teacher"); 
+                return RedirectToAction("Index", "Teacher");
             }
         }
 
@@ -80,7 +80,7 @@ namespace WebApplication.Controllers
                 var url = "http://localhost:11800/api/classroom/getstudentsforclass?classroomid=" + id;
                 var response = await client.GetStringAsync(url);
                 var result = JsonConvert.DeserializeObject<ICollection<string>>(response);
-                var model = new StudentViewModel() { ClassroomId = id, Users = result }; 
+                var model = new StudentViewModel() { ClassroomId = id, Users = result };
                 return View(model);
             }
         }
@@ -96,6 +96,25 @@ namespace WebApplication.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> StudentTokens(string id)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
+                var url = "http://localhost:11173/api/tokens/getstudentsfortoken/" + id;
+                var response = await client.GetStringAsync(url);
+
+                using (MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(response)))
+                {
+                    DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(StudentTokenData));
+                    StudentTokenData obj = (StudentTokenData)serializer.ReadObject(stream);
+                    var model = new StudentTokensViewModel() { Present = obj.Present, NotPresent = obj.NotPresent };
+                    return View(model);
+                }
+            }
+        }
+
         [HttpPost]
         public IActionResult Logout()
         {
@@ -103,4 +122,14 @@ namespace WebApplication.Controllers
             return RedirectToAction("Index", "Home");
         }
     }
+}
+
+[DataContract]
+public class StudentTokenData
+{
+    [DataMember(Name = "presentStudents")]
+    public List<string> Present { get; set; }
+
+    [DataMember(Name = "notPresentStudents")]
+    public List<string> NotPresent { get; set; }
 }

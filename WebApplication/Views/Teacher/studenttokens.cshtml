@@ -1,0 +1,59 @@
+﻿@model WebApplication.Models.TeacherViewModels.StudentTokensViewModel
+@{
+    ViewData["Title"] = "Student tokens";
+}
+
+<div class="row">
+    <div class="col-12">
+        <br />
+        <button class="btn btn-danger" onclick="window.history.back();" style="margin-right: 10px;" type="button">Go back!</button>
+
+
+        <br /><br>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Present</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var index = 1;
+                    foreach (var v in Model.Present)
+                    {
+                        <tr>
+                            <th>@index</th>
+                            <th>@v</th>
+                        </tr>
+                    }
+                }
+
+            </tbody>
+        </table>
+
+        <br /><br />
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Not present</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var indexx = 1;
+                    foreach (var v in Model.NotPresent)
+                    {
+                        <tr>
+                            <th>@indexx</th>
+                            <th>@v</th>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
