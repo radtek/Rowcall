@@ -1,0 +1,41 @@
+﻿@model WebApplication.Models.TeacherViewModels.StudentViewModel
+@{
+    ViewData["Title"] = "Students";
+}
+
+<div class="row">
+    <div class="col-12">
+        <br />
+        <form asp-controller="Teacher" asp-action="AddStudent" method="post">
+            <div class="input-group mb-3">
+                <button class="btn btn-danger" onclick="window.history.back();" style="margin-right: 10px;" type="button">Go back!</button>
+
+                <input type="hidden" asp-for="ClassroomId" />
+                <input type="text" class="form-control" name="email" placeholder="Add a student by email" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-outline-secondary">Add Student</button>
+                </div>
+            </div>
+        </form>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">User email</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var index = 1;
+                    foreach (var v in Model.Users)
+                    {
+                        <tr>
+                            <th>@index</th>
+                            <th>@v</th>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
