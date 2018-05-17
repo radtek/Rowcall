@@ -13,9 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplication", "WebApplic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TokenAPI", "TokenAPI\TokenAPI.csproj", "{2DA3876E-BAA4-4CA7-BF0E-DF5609E8B9AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccountAPI", "AccountAPI\AccountAPI.csproj", "{9470C87C-3972-428A-94FB-BF7AB0E593CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountAPI", "AccountAPI\AccountAPI.csproj", "{9470C87C-3972-428A-94FB-BF7AB0E593CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassroomAPI", "ClassroomAPI\ClassroomAPI.csproj", "{ABC41CCF-F289-4C6C-B229-ED2BB827F245}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClassroomAPI", "ClassroomAPI\ClassroomAPI.csproj", "{ABC41CCF-F289-4C6C-B229-ED2BB827F245}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

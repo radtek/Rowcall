@@ -71,6 +71,31 @@ namespace WebApplication.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Students(string id)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
+                var url = "http://localhost:11800/api/classroom/getstudentsforclass?classroomid=" + id;
+                var response = await client.GetStringAsync(url);
+                var result = JsonConvert.DeserializeObject<ICollection<string>>(response);
+                var model = new StudentViewModel() { ClassroomId = id, Users = result }; 
+                return View(model);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddStudent(string email, string classroomid)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
+                var response = await client.PostAsJsonAsync("http://localhost:11800/api/classroom/AddUserByEmail", new { ClassRoomId = classroomid, email = email });
+                return RedirectToAction("Index", "Teacher");
+            }
+        }
+
         [HttpPost]
         public IActionResult Logout()
         {
