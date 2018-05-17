@@ -81,14 +81,46 @@ namespace WebApplication.Controllers
         }
 
         [HttpPost]
-        public IActionResult Student(StudentViewModel model)
+        public async Task<IActionResult> Student(StudentViewModel model)
         {
-            var email = model.Email;
-            var password = model.Password;
-            var token = model.Token;
-            var longitude = model.Longitude;
-            var latitude = model.Latitude;
-            return View(model); 
+            if (ModelState.IsValid)
+            {
+                var email = model.Email;
+                var password = model.Password;
+                var token = model.Token;
+                var longitude = model.Longitude;
+                var latitude = model.Latitude;
+                var jsonObj = new { email, password, token, longitude, latitude };
+
+                using (HttpClient client = new HttpClient())
+                {
+                    var response = await client.PostAsJsonAsync("http://localhost:11473/account/StudentLogin", jsonObj);
+                    var resultString = await response.Content.ReadAsStringAsync();
+
+                    using (MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(resultString)))
+                    {
+                        DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(LoginApiData));
+                        LoginApiData obj = (LoginApiData)serializer.ReadObject(stream);
+
+                        if (obj.Succeded)
+                        {
+                            
+                            ViewData["Success"] = "You have succesfilly checked in.."; 
+                            var modell = new StudentViewModel();
+                            return View(modell);
+                        }
+                        else
+                        {
+                            ViewData["Error"] = obj.Response;
+                            return View(model);
+                        }
+                    }
+                }
+            }
+            var error = ModelState.Values.FirstOrDefault(x => x.ValidationState == ModelValidationState.Invalid).Errors.First().ErrorMessage;
+            ViewData["Error"] = error;
+            return View(model);
+
         }
 
         public IActionResult Error()
