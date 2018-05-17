@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AccountAPI.Data;
+using AccountAPI.Models;
+using Microsoft.AspNetCore.Identity;
 using AccountAPI.Data;
 using System;
 using System.Collections.Generic;

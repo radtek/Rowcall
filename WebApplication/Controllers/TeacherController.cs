@@ -55,8 +55,19 @@ namespace WebApplication.Controllers
                 var url = "http://localhost:11173/api/tokens/" + id; 
                 var response = await client.GetStringAsync(url);
                 var result = JsonConvert.DeserializeObject<ICollection<Token>>(response);
-                var model = new TokenViewModel() { Tokens = result };
+                var model = new TokenViewModel() { Tokens = result, ClassId = id };
                 return View(model);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateToken(string classid)
+        {
+            using (HttpClient client = new HttpClient()) 
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
+                var response = await client.PostAsJsonAsync("http://localhost:11173/api/tokens", new { ClassId = classid });
+                return RedirectToAction("Index", "Teacher"); 
             }
         }
 
