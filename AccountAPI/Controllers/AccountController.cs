@@ -76,6 +76,36 @@ namespace AccountAPI.Controllers
         }
 
         [HttpPost]
+        public async Task<object> AdminLogin([FromBody] LoginModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+
+                if (user != null)
+                {
+                    var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, false, false);
+                    if (result.Succeeded)
+                    {
+                        if (!await _userManager.IsInRoleAsync(user, "Admin"))
+                        {
+                            return Json(new JsonResponse(false, "Invalid login attempt. You are not an admin!"));
+                        }
+
+                        var roles = await _userManager.GetRolesAsync(user);
+                        var role = roles.First();
+
+                        return Json(new JsonResponse(true, await GenerateJwtToken(model.Email, user, role)));
+                    }
+                }
+                return Json(new JsonResponse(false, "Invalid login attempt."));
+            }
+            var modelError = ModelState.Values.SelectMany(x => x.Errors).First().ErrorMessage;
+
+            return Json(new JsonResponse(false, modelError));
+        }
+
+        [HttpPost]
         public async Task<object> StudentLogin([FromBody] StudentLoginModel model)
         {
             if (ModelState.IsValid)
