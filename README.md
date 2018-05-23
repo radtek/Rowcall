@@ -13,3 +13,12 @@ wants to login system always checks:
 - If token value is valid
 - If token is still valid (every token has 30 min duration)
 - If student is in certain area from school 
+
+
+# Deployment Instructions
+### Requirements
+- Open 'RowcallBackend' project console and run 'update-database' command
+- Then we also need to know is the system type that the project will be deployed on (Windows/OSX/Linux)
+
+
+
