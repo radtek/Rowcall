@@ -62,31 +62,32 @@ namespace TokenAPI.Controllers
             return Json(tokens); 
         }
 
-        [Route("getStudentsForToken/{tokenId}")]
+        [Route("getstudentsfortoken/{tokenId}")]
         [HttpGet]
         public async Task<IActionResult> GetStudentsForToken(int tokenId)
         {
             var token = _context.Token.First(y => y.Id == tokenId);
 
-            var classroom = _context.ClassRoom.First(x => x.Id == token.ClassId);
-
-        //    var classRoom = await _context.ClassRoom
-        //        .Include(x => x.Students)
-        //        .ThenInclude(x => x.ApplicationUser)
-        //        .SingleOrDefaultAsync(x => x.Id == classroom.Id);
+            var classRoom = await _context.ClassRoom
+                .Include(x => x.Students)
+                .ThenInclude(x => x.ApplicationUser)
+                .SingleOrDefaultAsync(x => x.Id == token.ClassId);
 
             var students = classRoom.Students.Select(x => x.ApplicationUser).ToList();
 
-            var userToken = _context.UserToken.First(x => x.TokenId == tokenId);
-            var checkedInStudents = _context.Users.Select(y => y.UserTokens
-            .First(x => x.ApplicationUserId == userToken.ApplicationUserId).ApplicationUser)
-            .ToList();
+            //var userToken = _context.UserToken.First(x => x.TokenId == tokenId);
 
-            var missingStudents = students.Intersect(checkedInStudents).ToList(); 
+            var checkedInStudents = _context.UserToken.Where(x => x.TokenId == tokenId).Include(x => x.ApplicationUser).Select(x => x.ApplicationUser); 
+                
+            //    _context.Users.Select(y => y.UserTokens
+            //.First(x => x.ApplicationUserId == userToken.ApplicationUserId).ApplicationUser)
+            //.ToList();
+
+            var missingStudents = students.Except(checkedInStudents).ToList(); 
 
             return Json(new{
-                            presentStudents = checkedInStudents,
-                            notPresentStudents = missingStudents
+                            presentStudents = checkedInStudents.Select(x => x.Email),
+                            notPresentStudents = missingStudents.Select(x => x.Email)
                             });
         }
     }
