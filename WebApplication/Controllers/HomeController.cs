@@ -114,7 +114,7 @@ namespace WebApplication.Controllers
                         }
                         else
                         {
-                            ViewData["Fail"] = "You have failed to check in, i am not mad, i am disapointed";
+                            ViewData["Error"] = obj.Response;
                             return View(model);
                         }
                     }
