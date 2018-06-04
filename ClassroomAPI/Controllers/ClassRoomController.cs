@@ -10,6 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Amazon.SimpleNotificationService.Model;
+using Amazon.SimpleNotificationService;
+using Amazon.Runtime.CredentialManagement;
 
 namespace ClassroomAPI.Controllers
 {
@@ -54,6 +57,13 @@ namespace ClassroomAPI.Controllers
             var classRoom = new ClassRoom() { Name = dto.Name, TeacherId = currentUser.Id };
             _dbContext.ClassRoom.Add(classRoom);
             _dbContext.SaveChanges();
+
+            AmazonSimpleNotificationServiceClient client = new AmazonSimpleNotificationServiceClient();
+
+
+            CreateTopicRequest request = new CreateTopicRequest(classRoom.Name);
+            CreateTopicResponse ctr = await client.CreateTopicAsync(request);
+
             return Json(classRoom);
         }
 
