@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using TokenAPI.Models;
 using TokenAPI.Data;
 using SOAPservice;
+using Amazon.SimpleNotificationService.Model;
+using Amazon.SimpleNotificationService;
 
 namespace TokenAPI.Controllers
 {
@@ -27,7 +29,7 @@ namespace TokenAPI.Controllers
 
         // POST: api/Tokens
         [HttpPost]
-        public IActionResult PostToken([FromBody] TokenDto dto)
+        public async Task< IActionResult > PostToken([FromBody] TokenDto dto)
         {
             if (!ModelState.IsValid)
             {
@@ -51,6 +53,14 @@ namespace TokenAPI.Controllers
 
             _context.Token.Add(token);
             _context.SaveChanges();
+
+            AmazonSimpleNotificationServiceClient snsClient = new AmazonSimpleNotificationServiceClient("AKIAJLAJIOHNR4Q2EQSQ", "+5t2ISSTpRYQnZomhd+C4S9LqQ8YiRqKjV1YRHLM", Amazon.RegionEndpoint.USWest2);
+            var topicArn = await snsClient.CreateTopicAsync(new CreateTopicRequest(dto.ClassId.ToString()));
+
+            String msg = "Your token for todays class is: " + token.TokenValue;
+            PublishRequest publishRequest = new PublishRequest(topicArn.TopicArn, msg);
+            var publishResult = await snsClient.PublishAsync(publishRequest);
+            //print MessageId of message published to SNS topic
 
             return CreatedAtAction("GetToken", new { id = token.Id }, token);
         }

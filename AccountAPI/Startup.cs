@@ -104,7 +104,7 @@ namespace AccountAPI
             app.UseMvc();
             //app.AddEfDiagrams<ApplicationDbContext>();
 
-            //SeedDb.InitDb(context);
+            SeedDb.InitDb(context);
 
         }
     }
