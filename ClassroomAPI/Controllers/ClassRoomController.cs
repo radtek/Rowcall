@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Amazon.SimpleNotificationService.Model;
 using Amazon.SimpleNotificationService;
 using Amazon.Runtime.CredentialManagement;
+using static Amazon.Internal.RegionEndpointProviderV2;
 
 namespace ClassroomAPI.Controllers
 {
@@ -57,6 +58,10 @@ namespace ClassroomAPI.Controllers
             var classRoom = new ClassRoom() { Name = dto.Name, TeacherId = currentUser.Id };
             _dbContext.ClassRoom.Add(classRoom);
             _dbContext.SaveChanges();
+
+            var accessKey = "xxx";
+            var secretKey = "xxx";
+
 
             AmazonSimpleNotificationServiceClient client = new AmazonSimpleNotificationServiceClient();
 
