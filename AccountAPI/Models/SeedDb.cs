@@ -37,6 +37,26 @@ namespace AccountAPI.Models
                 }
             }
 
+            //if(!dbContext.Users.Any(x => x.UserName == "christoffer"))
+            //{
+            //    var user = new ApplicationUser()
+            //    {
+            //        Id = "christoffer",
+            //        Email = "jeghedderchristoffer@gmail.com",
+            //        NormalizedEmail = "JEGHEDDERCHRISTOFFER@GMAIL.COM",
+            //        UserName = "christoffer",
+            //        NormalizedUserName = "CHRISTOFFER",
+            //        EmailConfirmed = true,
+            //        PhoneNumberConfirmed = true,
+            //        SecurityStamp = Guid.NewGuid().ToString("D"),
+            //    };
+            //    var password = new PasswordHasher<ApplicationUser>();
+            //    var hashed = password.HashPassword(user, "test123");
+            //    user.PasswordHash = hashed;
+            //    dbContext.Users.Add(user);
+            //    dbContext.SaveChanges(); 
+            //}
+
             if (!dbContext.Roles.Any())
             {
                 dbContext.Roles.Add(new IdentityRole() { Name = "Student", NormalizedName = "STUDENT" });

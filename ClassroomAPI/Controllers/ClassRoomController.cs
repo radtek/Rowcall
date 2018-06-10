@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using Amazon.SimpleNotificationService.Model;
 using Amazon.SimpleNotificationService;
 using Amazon.Runtime.CredentialManagement;
-using static Amazon.Internal.RegionEndpointProviderV2;
 
 namespace ClassroomAPI.Controllers
 {
@@ -59,14 +58,9 @@ namespace ClassroomAPI.Controllers
             _dbContext.ClassRoom.Add(classRoom);
             _dbContext.SaveChanges();
 
-            var accessKey = "xxx";
-            var secretKey = "xxx";
+            AmazonSimpleNotificationServiceClient client = new AmazonSimpleNotificationServiceClient("AKIAJLAJIOHNR4Q2EQSQ", "+5t2ISSTpRYQnZomhd+C4S9LqQ8YiRqKjV1YRHLM", Amazon.RegionEndpoint.USWest2); 
 
-
-            AmazonSimpleNotificationServiceClient client = new AmazonSimpleNotificationServiceClient();
-
-
-            CreateTopicRequest request = new CreateTopicRequest(classRoom.Name);
+            CreateTopicRequest request = new CreateTopicRequest(classRoom.Id.ToString());
             CreateTopicResponse ctr = await client.CreateTopicAsync(request);
 
             return Json(classRoom);
@@ -108,6 +102,11 @@ namespace ClassroomAPI.Controllers
                 return NotFound();
             _dbContext.UserClass.Add(new UserClass() { ApplicationUserId = user.Id, ClassRoomId = model.ClassRoomId });
             _dbContext.SaveChanges();
+
+            AmazonSimpleNotificationServiceClient client = new AmazonSimpleNotificationServiceClient("AKIAJLAJIOHNR4Q2EQSQ", "+5t2ISSTpRYQnZomhd+C4S9LqQ8YiRqKjV1YRHLM", Amazon.RegionEndpoint.USWest2);
+            var topicArn = await client.CreateTopicAsync(new CreateTopicRequest(model.ClassRoomId.ToString()));
+            await client.SubscribeAsync(new SubscribeRequest(topicArn.TopicArn, "email", model.Email)); 
+
             return Json("All good bro!"); 
         }
 
